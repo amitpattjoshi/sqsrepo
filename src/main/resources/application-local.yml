@@ -1,0 +1,25 @@
+# ============================================
+# LOCAL Development Profile
+# Uses LocalStack for SQS (no real AWS needed)
+# ============================================
+spring:
+  cloud:
+    aws:
+      region:
+        static: eu-west-1
+      credentials:
+        access-key: test
+        secret-key: test
+      sqs:
+        endpoint: http://localhost:4566
+      endpoint: http://localhost:4566
+
+  # H2 Console (safe for local)
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    io.awspring.cloud: DEBUG
+    com.ecommerce: DEBUG

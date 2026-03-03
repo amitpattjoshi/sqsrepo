@@ -1,0 +1,21 @@
+# Patch: Add initContainer to wait for LocalStack before app starts
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-sqs
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-localstack
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for LocalStack to be ready..."
+              until curl -sf http://localstack:4566/_localstack/health | grep -q '"sqs": "running"'; do
+                echo "LocalStack not ready yet, retrying in 3s..."
+                sleep 3
+              done
+              echo "LocalStack is ready!"

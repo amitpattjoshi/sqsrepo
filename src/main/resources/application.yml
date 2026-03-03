@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: ecommerce-sqs
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+  # R2DBC Database Configuration
+  r2dbc:
+    url: r2dbc:h2:mem:///ecommerce;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ${DB_PASSWORD:changeme}
+
+  # H2 Console (profile-specific override)
+  h2:
+    console:
+      enabled: false
+
+# Application Configuration
+app:
+  sqs:
+    queues:
+      order: order-queue.fifo
+      payment: payment-queue.fifo
+      notification: notification-queue.fifo
+      inventory: inventory-queue.fifo
+
+# Server Configuration
+server:
+  port: 8082
+
+# Logging (profile-specific override)
+logging:
+  level:
+    io.awspring.cloud: INFO
+    com.ecommerce: INFO

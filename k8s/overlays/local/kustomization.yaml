@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ecommerce-local
+
+resources:
+  - ../../base
+  - localstack-deployment.yaml
+  - localstack-service.yaml
+  - localstack-init-configmap.yaml
+
+patches:
+  - path: patch-deployment.yaml
+    target:
+      kind: Deployment
+      name: ecommerce-sqs
+
+configMapGenerator:
+  - name: app-config
+    behavior: replace
+    literals:
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_CLOUD_AWS_SQS_ENDPOINT=http://localstack:4566
+      - SPRING_CLOUD_AWS_ENDPOINT=http://localstack:4566
+      - DB_PASSWORD=changeme

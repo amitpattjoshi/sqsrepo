@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-sqs
+  labels:
+    app: ecommerce-sqs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecommerce-sqs
+  template:
+    metadata:
+      labels:
+        app: ecommerce-sqs
+    spec:
+      containers:
+        - name: ecommerce-sqs
+          image: ecommerce-sqs:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+          envFrom:
+            - configMapRef:
+                name: app-config
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

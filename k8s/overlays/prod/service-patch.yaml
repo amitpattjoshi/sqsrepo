@@ -1,0 +1,10 @@
+# Patch: Change Service from NodePort to LoadBalancer for EKS
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecommerce-sqs
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8082
+      targetPort: 8082

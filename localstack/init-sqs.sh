@@ -1,0 +1,26 @@
+#!/bin/bash
+# This script runs automatically when LocalStack starts.
+# It creates the SQS FIFO queues needed by the application.
+
+echo "Creating SQS FIFO queues in LocalStack..."
+
+# Dead Letter Queues
+awslocal sqs create-queue --queue-name order-dlq.fifo --attributes '{"FifoQueue":"true","MessageRetentionPeriod":"1209600"}'
+awslocal sqs create-queue --queue-name inventory-dlq.fifo --attributes '{"FifoQueue":"true","MessageRetentionPeriod":"1209600"}'
+awslocal sqs create-queue --queue-name payment-dlq.fifo --attributes '{"FifoQueue":"true","MessageRetentionPeriod":"1209600"}'
+awslocal sqs create-queue --queue-name notification-dlq.fifo --attributes '{"FifoQueue":"true","MessageRetentionPeriod":"1209600"}'
+
+# Get DLQ ARNs
+ORDER_DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/order-dlq.fifo --attribute-names QueueArn --query 'Attributes.QueueArn' --output text)
+INVENTORY_DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/inventory-dlq.fifo --attribute-names QueueArn --query 'Attributes.QueueArn' --output text)
+PAYMENT_DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/payment-dlq.fifo --attribute-names QueueArn --query 'Attributes.QueueArn' --output text)
+NOTIFICATION_DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/notification-dlq.fifo --attribute-names QueueArn --query 'Attributes.QueueArn' --output text)
+
+# Main Queues with redrive policy
+awslocal sqs create-queue --queue-name order-queue.fifo --attributes "{\"FifoQueue\":\"true\",\"ContentBasedDeduplication\":\"true\",\"DeduplicationScope\":\"messageGroup\",\"FifoThroughputLimit\":\"perMessageGroupId\",\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"${ORDER_DLQ_ARN}\\\",\\\"maxReceiveCount\\\":\\\"3\\\"}\"}"
+awslocal sqs create-queue --queue-name inventory-queue.fifo --attributes "{\"FifoQueue\":\"true\",\"ContentBasedDeduplication\":\"true\",\"DeduplicationScope\":\"messageGroup\",\"FifoThroughputLimit\":\"perMessageGroupId\",\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"${INVENTORY_DLQ_ARN}\\\",\\\"maxReceiveCount\\\":\\\"3\\\"}\"}"
+awslocal sqs create-queue --queue-name payment-queue.fifo --attributes "{\"FifoQueue\":\"true\",\"ContentBasedDeduplication\":\"true\",\"DeduplicationScope\":\"messageGroup\",\"FifoThroughputLimit\":\"perMessageGroupId\",\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"${PAYMENT_DLQ_ARN}\\\",\\\"maxReceiveCount\\\":\\\"3\\\"}\"}"
+awslocal sqs create-queue --queue-name notification-queue.fifo --attributes "{\"FifoQueue\":\"true\",\"ContentBasedDeduplication\":\"true\",\"DeduplicationScope\":\"messageGroup\",\"FifoThroughputLimit\":\"perMessageGroupId\",\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"${NOTIFICATION_DLQ_ARN}\\\",\\\"maxReceiveCount\\\":\\\"3\\\"}\"}"
+
+echo "All SQS FIFO queues created successfully!"
+awslocal sqs list-queues

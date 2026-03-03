@@ -1,0 +1,25 @@
+# Patch: EKS prod deployment - ECR image, IRSA, increased resources
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-sqs
+spec:
+  template:
+    spec:
+      serviceAccountName: ecommerce-sqs-sa
+      containers:
+        - name: ecommerce-sqs
+          image: 532593931086.dkr.ecr.eu-west-1.amazonaws.com/ecommerce-sqs:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: aws-credentials
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"

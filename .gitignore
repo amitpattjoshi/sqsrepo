@@ -1,0 +1,48 @@
+# === Java / Maven ===
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# === IDE ===
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.project
+.classpath
+.settings/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Terraform ===
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.backup
+infra/*.tfplan
+infra/.terraform.lock.hcl
+
+# === Terraform sensitive ===
+# Don't commit tfvars with secrets (review before committing)
+# infra/terraform.tfvars
+
+# === Docker ===
+.dockerignore
+
+# === Kubernetes secrets (never commit real secrets) ===
+# k8s/overlays/prod/secret.yaml  # Uncomment if it contains real values
+
+# === Environment / Credentials ===
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+
+# === Logs ===
+*.log
+logs/
