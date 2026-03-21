@@ -1,0 +1,4 @@
+apiVersion: v2
+name: ecommerce-sqs
+version: 0.1.0
+description: E-commerce SQS app Helm chart

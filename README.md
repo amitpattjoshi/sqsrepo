@@ -24,6 +24,11 @@ sudo mv kubectl /usr/local/bin/
 
 kubectl version --client
 
+kubectl rollout restart deployment/ecommerce-sqs -n ecommerce-prod
+kubectl get po -n ecommerce-prod -w
+kubectl logs -f deployment/ecommerce-sqs -n ecommerce-prod
+curl http://a9ddc12e373b141ca93fbcd090c6312a-976382273.eu-west-1.elb.amazonaws.com:8082/api/products
+
 # EKSCTL install
 
 ARCH=amd64

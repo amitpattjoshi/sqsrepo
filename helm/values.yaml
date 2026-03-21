@@ -1,0 +1,17 @@
+replicaCount: 1
+image:
+  repository: ecommerce-sqs
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: NodePort
+  port: 8082
+  nodePort: 30082
+env:
+  SPRING_PROFILES_ACTIVE: local
+  DB_PASSWORD: changeme
+  AWS_REGION: eu-west-1
+irsa:
+  enabled: false
+  roleArn: ""
+resources: {}

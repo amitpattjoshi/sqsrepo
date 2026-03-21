@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: { { include "ecommerce-sqs.fullname" . } }
+  labels:
+    app: { { include "ecommerce-sqs.name" . } }
+spec:
+  replicas: { { .Values.replicaCount } }
+  selector:
+    matchLabels:
+      app: { { include "ecommerce-sqs.name" . } }
+  template:
+    metadata:
+      labels:
+        app: { { include "ecommerce-sqs.name" . } }
+    spec:
+      serviceAccountName: { { include "ecommerce-sqs.fullname" . } }-sa
+      containers:
+        - name: ecommerce-sqs
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: { { .Values.image.pullPolicy } }
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: { { .Values.env.SPRING_PROFILES_ACTIVE | quote } }
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: { { include "ecommerce-sqs.fullname" . } }-secret
+                  key: DB_PASSWORD
+            - name: AWS_REGION
+              value: { { .Values.env.AWS_REGION | quote } }
+            {{- if .Values.env.AWS_ACCESS_KEY_ID }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: { { include "ecommerce-sqs.fullname" . } }-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: { { include "ecommerce-sqs.fullname" . } }-secret
+                  key: AWS_SECRET_ACCESS_KEY
+            {{- end }}
+          resources: { { - toYaml .Values.resources | nindent 12 } }

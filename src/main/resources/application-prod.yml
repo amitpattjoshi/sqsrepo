@@ -1,15 +1,12 @@
 # ============================================
 # PROD Profile
-# Uses real AWS SQS with IAM/profile credentials
+# Uses default AWS credential chain (env vars, IRSA, instance role)
 # ============================================
 spring:
   cloud:
     aws:
       region:
         static: ${AWS_REGION:eu-west-1}
-      credentials:
-        profile:
-          name: ${AWS_PROFILE:sqs}
 
   h2:
     console:
