@@ -50,7 +50,7 @@ public class OrderController {
      */
     @GetMapping("/customer/{customerId}")
     public Flux<OrderResponse> getOrdersByCustomer(@PathVariable String customerId) {
-        log.info("Fetching orders for customer : {}", customerId);
+        log.info("Fetching orders for customer: {}", customerId);
         return orderService.getOrdersByCustomerId(customerId);
     }
 }
