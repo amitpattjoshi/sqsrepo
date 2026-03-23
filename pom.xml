@@ -60,10 +60,10 @@
         </dependency>
 
         <!-- Actuator (health checks for K8s probes) -->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+        </dependency> -->
 
         <!-- Lombok -->
         <dependency>
