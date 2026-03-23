@@ -2,8 +2,10 @@
 
 # Quick commands
 
-- aws ssm start-session --target i-0d41c2277b9304ea1 --profile sqs --region eu-west-1
+- aws ssm start-session --target i-0c947afc18790a583 --profile sqs --region eu-west-1
 - aws ssm start-session --target $(terraform output --raw ec2_instance_id) --profile sqs --region eu-west-1
+
+aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text > ec2-sqs.pem
 
 /\*\*
 

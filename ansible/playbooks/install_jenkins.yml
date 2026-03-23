@@ -1,0 +1,38 @@
+---
+- name: Install Jenkins on EC2
+  hosts: jenkins
+  become: true
+  tasks:
+    - name: Install Java 21
+      yum:
+        name: java-21-amazon-corretto-headless
+        state: present
+
+    - name: Add Jenkins repo
+      get_url:
+        url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+
+    - name: Import Jenkins GPG key
+      rpm_key:
+        state: present
+        key: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+    - name: Install Jenkins
+      yum:
+        name: jenkins
+        state: present
+
+    - name: Enable and start Jenkins
+      systemd:
+        name: jenkins
+        enabled: yes
+        state: started
+
+    - name: Create application directory
+      file:
+        path: /opt/ecommerce
+        state: directory
+        owner: ec2-user
+        group: ec2-user
+        mode: '0755'

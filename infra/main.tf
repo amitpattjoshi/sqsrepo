@@ -288,6 +288,7 @@ module "ec2" {
   enable_ssh      = var.ec2_enable_ssh
   ssh_cidr_blocks = var.ec2_ssh_cidr_blocks
   key_name        = var.ec2_key_name
+  user_data       = file("${path.module}/user_data.sh")
 
   tags = var.common_tags
 }
